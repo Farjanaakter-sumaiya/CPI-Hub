@@ -1,0 +1,864 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CPI Hub - Senior Junior Collaboration Platform</title>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-hover: #1d4ed8;
+            --secondary: #0f172a;
+            --accent: #d63384;
+            --bg: #f8fafc;
+            --card-bg: #ffffff;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+        }
+/* 👉 পুরো পেজে টেক্সট সিলেক্ট করা বন্ধ করার জন্য */
+body {
+    -webkit-user-select: none; /* Safari */
+    -moz-user-select: none;    /* Firefox */
+    -ms-user-select: none;     /* IE/Edge */
+    user-select: none;         /* Standard */
+}
+
+/* 👉 কোড বক্স বা ফাইলে সিলেক্ট বন্ধ রাখা */
+.code-box {
+    user-select: none;
+}
+        body {
+            background-color: var(--bg);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        /* Navbar */
+        .navbar {
+            background-color: var(--card-bg);
+            border-bottom: 1px solid var(--border);
+            padding: 1rem 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 1.35rem;
+            font-weight: 700;
+            color: var(--secondary);
+        }
+
+        .brand i { color: var(--primary); font-size: 1.5rem; }
+        .brand span { color: var(--primary); }
+
+        .container {
+            max-width: 1100px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+            width: 100%;
+            flex: 1;
+            box-sizing: border-box;
+        }
+
+        .hero {
+            background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%);
+            color: white;
+            padding: 2.5rem;
+            border-radius: 16px;
+            margin-bottom: 2rem;
+            box-shadow: 0 10px 25px -5px rgba(37, 99, 235, 0.3);
+        }
+
+        .hero h1 { font-size: 2rem; margin-bottom: 0.5rem; }
+        .hero p { opacity: 0.9; font-size: 1.05rem; max-width: 750px; }
+
+        /* Controls / Search & Filters */
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .search-box {
+            position: relative;
+            flex: 1;
+            min-width: 280px;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 0.75rem 1rem 0.75rem 2.5rem;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            font-size: 0.95rem;
+            outline: none;
+            box-sizing: border-box;
+        }
+
+        .search-box i {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+        }
+
+        .filter-tabs { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+
+        .tab {
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            background: white;
+            border: 1px solid var(--border);
+            color: var(--text-muted);
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .tab.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        /* Feed Grid */
+        .feed-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(330px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.25rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02);
+            transition: transform 0.2s;
+        }
+        .card:hover { transform: translateY(-3px); }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 0.75rem;
+        }
+
+        .user-info { display: flex; gap: 0.75rem; align-items: center; }
+
+        .avatar {
+            width: 42px; height: 42px; border-radius: 50%;
+            background: #e2e8f0; display: flex; align-items: center;
+            justify-content: center; font-weight: 700; color: var(--primary);
+        }
+
+        .user-details h4 { font-size: 0.95rem; color: var(--secondary); margin: 0; }
+        .user-details p { font-size: 0.75rem; color: var(--text-muted); margin: 0; }
+
+        .badge {
+            font-size: 0.7rem; padding: 0.25rem 0.5rem;
+            border-radius: 12px; font-weight: 700; text-transform: uppercase;
+        }
+        .badge-skill { background: #dbeafe; color: #1e40af; }
+        .badge-project { background: #dcfce7; color: #166534; }
+        .badge-help { background: #fee2e2; color: #991b1b; }
+
+        .card-body h3 { font-size: 1.1rem; margin-bottom: 0.5rem; color: var(--secondary); }
+        .card-body p { font-size: 0.88rem; color: var(--text-muted); line-height: 1.4; margin-bottom: 1rem; }
+
+        .tag-list { display: flex; gap: 0.4rem; flex-wrap: wrap; margin-bottom: 1rem; }
+        .tag { font-size: 0.75rem; background: var(--bg); color: var(--text-muted); padding: 0.2rem 0.5rem; border-radius: 4px; }
+
+        .action-buttons { display: flex; gap: 0.4rem; margin-top: 0.8rem; flex-wrap: wrap; }
+
+        .btn {
+            padding: 0.5rem 1rem; border-radius: 8px; font-weight: 600;
+            cursor: pointer; border: none; transition: all 0.2s ease;
+            display: inline-flex; align-items: center; gap: 0.4rem; font-size: 0.85rem;
+        }
+
+        .btn-primary { background-color: var(--primary); color: white; }
+        .btn-accent { background-color: #ec4899; color: white; }
+        .btn-outline { background-color: transparent; border: 1px solid var(--border); color: var(--text-main); }
+
+        .card-footer {
+            border-top: 1px solid var(--border);
+            padding-top: 0.75rem; margin-top: 0.5rem;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .time { font-size: 0.75rem; color: var(--text-muted); }
+
+        /* Modals Structure */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(4px);
+            display: flex; align-items: center; justify-content: center;
+            z-index: 1000; opacity: 0; visibility: hidden; transition: all 0.2s ease;
+        }
+        .modal-overlay.active { opacity: 1; visibility: visible; }
+        
+        .modal {
+            background: white; border-radius: 12px; width: 90%; max-width: 700px;
+            padding: 1.5rem; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1);
+            max-height: 85vh; overflow-y: auto;
+        }
+
+        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; border-bottom: 1px solid var(--border); padding-bottom: 0.75rem; }
+        .close-btn { background: none; border: none; font-size: 1.25rem; cursor: pointer; color: var(--text-muted); }
+
+        .preview-img-container { margin-top: 10px; text-align: center; }
+        .preview-img-container img { width: 100%; max-height: 350px; object-fit: contain; border-radius: 8px; border: 1px solid var(--border); }
+/* 👉 ফাইল ট্রি এবং কোড বক্সের টেক্সট সিলেকশন সম্পূর্ণ বন্ধ করার জন্য */
+.file-tree { 
+    background: #1e293b; color: #cbd5e1; padding: 0.75rem; border-radius: 6px; font-family: monospace; font-size: 0.85rem; margin-bottom: 0.75rem; white-space: pre-wrap; 
+    user-select: none; /* কেউ সিলেক্ট করতে পারবে না */
+    -webkit-user-select: none;
+    -moz-user-select: none;
+}
+
+.code-box {
+    width: 100%; height: 260px; background: #0f172a; color: #38bdf8;
+    padding: 1rem; border-radius: 8px; font-family: 'Courier New', monospace; font-size: 0.85rem;
+    border: 1px solid #1e293b; outline: none; resize: vertical; box-sizing: border-box; line-height: 1.4;
+    user-select: none;         /* টেক্সট সিলেক্ট করা যাবে না */
+    pointer-events: none;      /* মাউস দিয়ে কোনো ক্লিক বা ড্র্যাগ করা যাবে না */
+}
+
+        /* Create Post Form Styles */
+        .form-group { margin-bottom: 1rem; }
+        .form-group label { display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.4rem; }
+        .form-group input, .form-group textarea, .form-group select {
+            width: 100%; padding: 0.6rem; border-radius: 6px; border: 1px solid var(--border); box-sizing: border-box;
+        }
+
+        footer { text-align: center; padding: 1.5rem; border-top: 1px solid var(--border); background: white; color: var(--text-muted); font-size: 0.85rem; margin-top: 2rem; }
+    </style>
+</head>
+<body oncontextmenu="return false;">
+
+    <!-- Navbar -->
+    <header class="navbar">
+        <div class="brand">
+            <i class="fa-solid fa-graduation-cap"></i>
+            <div>CPI <span>Hub</span></div>
+        </div>
+        <div>
+            <button class="btn btn-primary" onclick="openCreatePostModal()">
+                <i class="fa-solid fa-plus"></i> Create Post
+            </button>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="hero">
+            <h1>CST Senior-Junior Collaboration Network</h1>
+            <p>আপনার স্কিল শেয়ার করুন, প্রজেক্টের ছবি ও পাইথন/এইচটিএমএল কোড দেখুন অথবা যেকোনো সমস্যা নিয়ে প্রশ্ন বা সাহায্য চান।</p>
+        </div>
+
+        <!-- Search & Filter Controls -->
+        <div class="controls">
+            <div class="search-box">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input type="text" id="searchInput" placeholder="Search by topic, tech or name..." oninput="filterPosts()">
+            </div>
+            <div class="filter-tabs">
+                <button class="tab active" onclick="setCategory('all', this)">All Posts</button>
+                <button class="tab" onclick="setCategory('skill', this)">Skills</button>
+                <button class="tab" onclick="setCategory('project', this)">Projects</button>
+                <button class="tab" onclick="setCategory('help', this)">Help Requests</button>
+            </div>
+        </div>
+
+        <!-- Feed Grid -->
+        <div class="feed-grid" id="feedGrid"></div>
+    </div>
+
+    <!-- 1. Live Preview Modal -->
+    <div class="modal-overlay" id="previewModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 id="previewTitle">Project Live Interactive Preview</h3>
+                <button class="close-btn" onclick="closePreviewModal()">&times;</button>
+            </div>
+            <div id="previewBody"></div>
+        </div>
+    </div>
+
+    <!-- 2. Source Code Modal -->
+    <div class="modal-overlay" id="codeModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 id="codeTitle">Source Code & Files</h3>
+                <button class="close-btn" onclick="closeCodeModal()">&times;</button>
+            </div>
+            <div id="codeBody"></div>
+        </div>
+    </div>
+
+    <!-- 3. Contact Modal -->
+    <div class="modal-overlay" id="contactModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3>Contact & Connect</h3>
+                <button class="close-btn" onclick="closeContactModal()">&times;</button>
+            </div>
+            <div style="text-align: center; padding: 1rem 0;">
+                <i class="fa-solid fa-address-card" style="font-size: 3rem; color: var(--primary); margin-bottom: 1rem;"></i>
+                <h4 id="contactPersonName">Name</h4>
+                <p id="contactPersonRole" style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 1rem;">Role</p>
+                <div style="background: var(--bg); padding: 0.75rem; border-radius: 8px; border: 1px solid var(--border); font-weight: 600;" id="contactDetails"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 4. Create Post Modal -->
+    <div class="modal-overlay" id="createPostModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3>Create New Post / Question</h3>
+                <button class="close-btn" onclick="closeCreatePostModal()">&times;</button>
+            </div>
+            <form onsubmit="handleNewPost(event)">
+                <div class="form-group">
+                    <label>Your Name</label>
+                    <input type="text" id="postName" placeholder="e.g. Farjana Akter" required>
+                </div>
+                <div class="form-group">
+                    <label>Semester / Role</label>
+                    <input type="text" id="postRole" placeholder="e.g. 6th Semester, CST" required>
+                </div>
+                <div class="form-group">
+                    <label>Category Type</label>
+                    <select id="postType">
+                        <option value="skill">Skill Showcase</option>
+                        <option value="project">Project Showcase</option>
+                        <option value="help">Help Request / Question</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Title</label>
+                    <input type="text" id="postTitle" placeholder="Post Title" required>
+                </div>
+                <div class="form-group">
+                    <label>Description</label>
+                    <textarea id="postDesc" rows="3" placeholder="Write details..." required></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Tags (Comma separated)</label>
+                    <input type="text" id="postTags" placeholder="HTML, Python, Question">
+                </div>
+                <div class="form-group">
+                    <label>Contact Info</label>
+                    <input type="text" id="postContact" placeholder="Email / Phone" required>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">Submit Post</button>
+            </form>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2026 CPI Hub - Prepared for CST Department Collaboration</p>
+    </footer>
+
+    <!-- 👉 পাইথন বা বড় কোডগুলো কোনো এরর ছাড়াই রাখার সেফটি ট্যাগ (এখানে কোড রাখবেন) -->
+    <script id="code-cosmetic" type="text/plain">
+
+      </div> 
+       <div class="navber"> <div  class="topnav">
+             <li><a href="project.html" class="active">Home</a></li> 
+             <li><a href="product.html">Product</a></li> 
+             <li><a href="contact.html">Contact</a></li> 
+             <li><a href="about us .html">About Us</a></li> 
+              <li><a href="order.html" class="cart-icon"><i class="fa-solid fa-bag-shopping"></i>
+              <span class="cart-value">0</span></a></li>
+            </div></div>
+    </div>
+   <section > <div class="slideshow-container">
+
+  <!-- Full-width images with number and caption text -->
+  <div class="mySlides fade">
+    <div class="numbertext">1 / 3</div>
+    <div class="text">
+    <h4>"From Our Heart to Your Skin ,<br>
+       Love the Skin You’re In."</h4>
+       <h1>Fashion icon</h1>
+       <p>save more with coupons & up to 50% off</p>
+       <br>
+       <a href="product.html"> <button>Shop Now</button></a>
+  </div>
+    <img src="https://image.slidesdocs.com/responsive-images/background/cosmetic-products-with-pink-3d-rendering-for-beauty-products-rezonazaci-powerpoint-background_d22df6f867__960_540.jpg" >
+    
+  </div>
+
+  <div class="mySlides fade">
+    <div class="numbertext">2 / 3</div>
+    <div class="text">
+    <h4>"From Our Heart to Your Skin ,<br>
+       Love the Skin You’re In."</h4>
+       <h1>Fashion icon</h1>
+       <p>save more with coupons & up to 50% off</p>
+       <br><div class="button"><button>Shop Now</button></div></div>
+    <img src="https://png.pngtree.com/background/20230527/original/pngtree-pink-makeup-products-sitting-out-on-a-table-picture-image_2768992.jpg" >
+   
+   </div>
+  </div>
+ 
+  <div class="mySlides fade">
+    <div class="numbertext">3 / 3</div>
+    <div class="text">
+    <h4>"From Our Heart to Your Skin ,<br>
+       Love the Skin You’re In."</h4>
+       <h1>Fashion icon</h1>
+       <p>save more with coupons & up to 50% off</p>
+      <br> <button>Shop Now
+       
+      </button>
+   </div>
+    <img src="https://png.pngtree.com/background/20230422/original/pngtree-multiple-pink-cosmetic-products-in-the-background-picture-image_2453709.jpg" >
+    
+  </div>
+
+   </section>
+    </script>
+
+  
+
+
+    <!-- এয়ার মাউসের পাইথন কোড এখানে রাখতে পারবেন -->
+    <script id="code-airmouse" type="text/plain">
+import threading
+import serial
+import serial.tools.list_ports
+import keyboard
+from pynput.mouse import Button, Controller
+from pynput.keyboard import Key, Controller as KeyboardController
+
+# Import user configuration settings
+try:
+    import config
+except ImportError:
+    print("[Error] Could not find config.py in the same folder.")
+    sys.exit(1)
+
+mouse = Controller()
+py_keyboard = KeyboardController()
+running = True
+
+# Calibration offset variables
+offset_gx = 0.0
+offset_gy = 0.0
+offset_gz = 0.0
+is_calibrated = False
+
+# Gesture cooldown tracking
+last_gesture_time = 0.0
+flick_count = 0
+last_flick_time = 0.0
+
+def signal_handler():
+    global running
+    print("\n[AirMouse] Exit hotkey detected. Exiting gracefully...")
+    running = False
+
+keyboard.add_hotkey("ctrl+shift+q", signal_handler)
+
+def find_serial_port():
+    if config.SERIAL_PORT != "AUTO":
+        return config.SERIAL_PORT
+
+    ports = serial.tools.list_ports.comports()
+    for port in ports:
+        desc = port.description.lower()
+        hwid = port.hwid.lower()
+        if "ch340" in desc or "usb-serial" in desc or "arduino" in desc or "ch340" in hwid:
+            return port.device
+
+    if ports:
+        return ports[0].device
+
+    return None
+
+def calibrate_sensor(ser):
+    """Calibrates gyro offsets to completely eliminate cursor drift/floating"""
+    global offset_gx, offset_gy, offset_gz, is_calibrated
+    print("\n[AirMouse] Calibrating... Keep the sensor STRICTLY STILL on a flat surface!")
+    
+    sum_gx, sum_gy, sum_gz = 0.0, 0.0, 0.0
+    samples = 100
+    count = 0
+    
+    while count < samples:
+        try:
+            line_bytes = ser.readline()
+            if not line_bytes:
+                continue
+            line = line_bytes.decode("utf-8", errors="ignore").strip()
+            if not line.startswith("GX:"):
+                continue
+            
+            parts = line.split(",")
+            data = {}
+            for part in parts:
+                if ":" in part:
+                    k, v = part.split(":", 1)
+                    try:
+                        data[k.strip()] = int(v.strip())
+                    except ValueError:
+                        pass
+            
+            sum_gx += data.get("GX", 0)
+            sum_gy += data.get("GY", 0)
+            sum_gz += data.get("GZ", 0)
+            count += 1
+            time.sleep(0.01)
+        except Exception:
+            pass
+            
+    offset_gx = sum_gx / samples
+    offset_gy = sum_gy / samples
+    offset_gz = sum_gz / samples
+    is_calibrated = True
+    print(f"[AirMouse] Calibration Done! Offsets -> GX: {offset_gx:.1f}, GY: {offset_gy:.1f}, GZ: {offset_gz:.1f}")
+
+def trigger_key_async(key_to_press):
+    """Executes key presses in a background thread to prevent mouse freeze"""
+    def task():
+        py_keyboard.tap(key_to_press)
+    threading.Thread(target=task, daemon=True).start()
+
+def open_app_async():
+    """Opens app/file in background without blocking main loop"""
+    def task():
+        file_path = getattr(config, 'PRESENTATION_FILE_PATH', r"C:\Users\Public\presentation.pptx")
+        if os.path.exists(file_path):
+            os.startfile(file_path)
+        else:
+            try:
+                subprocess.Popen(["powerpnt.exe"])
+            except Exception:
+                pass
+    threading.Thread(target=task, daemon=True).start()
+    </script>
+
+    <script id="code-portfolio" type="text/plain">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+    <link rel="stylesheet" href="style.css">
+    <title>Farjana Portfolio</title>
+</head>
+<body>
+    <nav>
+        <div class="nav-container">
+            <div class="logo" data-aos="zoom-in" data-aos-duration="1500">
+                Farjana <span>Akter</span>
+            </div>
+            <div class="links">
+                <div class="link" data-aos="fade-up" data-aos-duration="1500" data-aos-delay="100"><a href="#">Home</a></div>
+                <div class="link" data-aos="fade-up" data-aos-duration="1500" data-aos-delay="200"><a href="#">About</a></div>
+                <div class="link" data-aos="fade-up" data-aos-duration="1500" data-aos-delay="300"><a href="#">Skills</a></div>
+                
+                <div class="link" data-aos="fade-up" data-aos-duration="1500" data-aos-delay="500"><a href="#">Contact</a></div>
+        </div>
+        <i class="fa-solid fa-bars hamburg" onclick="hamburg()"></i>
+    </div>
+        <div class="dropdown">
+            <div class="links">
+                <a href="#">Home</a>
+                <a href="#">About</a>
+                <a href=>Skills</a>
+               <a href="#">Contact</a>
+                <i class="fa-solid fa-xmark cancel" onclick="cancel()"></i>
+            </div>
+        </div>
+    </nav>
+    <section>
+        <div class="main-container">
+            <div class="image" data-aos="zoom-out" data-aos-duration="3000">
+                <img src="WhatsApp Image 2025-05-21 at 09.48.02_fb945563.jpg" alt="">
+            </div>
+            <div class="content">
+                <h1 data-aos="fade-left" data-aos-duration="1500" data-aos-delay="700">Hey I'm <span>Farjana</span></h1>
+                <div class="typewriter" data-aos="fade-right" data-aos-duration="1500" data-aos-delay="900">I'm a <span class="typewriter-text"> student</span><label for="">|</label></div>
+                <p data-aos="flip-down" data-aos-duration="1500" data-aos-delay="1100"> This is Sumaiya I am a student of Chattogram Polytechnic Institute and I am learning Web Desgin and Programming.</p>
+                <div class="social-links">
+                   
+                    <a href="https://www.facebook.com/farjana.akter.sumaiya.61533" data-aos="fade-up" data-aos-duration="1500" data-aos-delay="1400"><i class="fa-brands fa-facebook"></i></a>
+                    <a href="#" data-aos="fade-up" data-aos-duration="1500" data-aos-delay="1500"><i class="fa-brands fa-linkedin"></i></a>
+                    <a href="mailto:sumaiyafarjanaakter86@gmail.com?" data-aos="fade-up" data-aos-duration="1500" data-aos-delay="1600"><i class="fa-solid fa-envelope"></i></a>
+                </div>
+                <div class="btn" data-aos="zoom-in" data-aos-duration="1500" data-aos-delay="1800">
+                    <button><a href="c:\Users\LENOVO\Downloads\newcv.pdf.pdf">Dawonload CV </a>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+    <script>
+      AOS.init({offset:0});
+    </script>
+    <script src="script.js"></script>
+</body>
+</html>
+    </script>
+
+    <script>
+        // 👉 প্রজেক্ট এবং পোস্টের মূল তালিকা
+        const postsData = [
+            {
+                id: 1,
+                name: "Farjana Akter",
+                role: "6th Semester, CST",
+                type: "project",
+                title: "Fashion Icon - Cosmetic Web Store & E-Commerce UI",
+                desc: "একটি বিউটি ও কসমেটিক প্ল্যাটফর্ম লেআউট, যেখানে প্রোডাক্ট ডিসপ্লে এবং ইউআই রয়েছে।",
+                tags: ["HTML5", "CSS3", "Cosmetic Store"],
+                contact: "Email: fashionicon@gmail.com",
+                hasLivePreview: true,
+                hasCode: true,
+                // 👇 ১. কসমেটিকস ছবির নাম এখানে বসাবেন
+                liveDetails: `
+                    <div style="background:#fff0f6; padding:1rem; border-radius:10px; border:1px solid #fcc2d7;">
+                        <h4 style="color:#d63384; margin-bottom:0.5rem;"><i class="fa-solid fa-store"></i> Cosmetic Store Preview</h4>
+                        <div class="preview-img-container">
+                            <img src="Cousmetic.png" alt="Cosmetic Home Page" onerror="this.src='https://via.placeholder.com/600x300?text=Image+Not+Found'">
+                            <p style="font-size:0.75rem; color:#666; margin-top:5px;">Home Page UI Preview</p>
+                        </div>
+                    </div>
+                `,
+                folderStructure: "📁 cosmetic-store/\n ├── 📄 index.html\n └── 📁 css/ style.css",
+                codeElementId: "code-cosmetic"
+            },
+            {
+                id: 2,
+                name: "Farjana Akter",
+                role: "6th Semester, CST",
+                type: "project",
+                title: "Gesture-Controlled Air Mouse Hardware Prototype",
+                desc: "Arduino Nano, MPU6050 Accelerometer/Gyroscope মোশন-কন্ট্রোলড মাউস সিস্টেম।",
+                tags: ["Arduino", "Python", "Hardware"],
+                contact: "Email: sumaiyafarjanaakter86@gmail.com",
+                hasLivePreview: true,
+                hasCode: true,
+                // 👇 ২. এয়ার মাউস ছবির নাম এখানে বসাবেন
+                liveDetails: `
+                    <div style="background:#eff6ff; padding:1rem; border-radius:10px; border:1px solid #bfdbfe;">
+                        <h4 style="color:#1d4ed8; margin-bottom:0.5rem;"><i class="fa-solid fa-hand-pointer"></i> Air Mouse Specs</h4>
+                        <div class="preview-img-container">
+                            <img src="Airmouse.png" alt="Air Mouse Hardware" onerror="this.src='https://via.placeholder.com/600x300?text=Image+Not+Found'">
+                            <p style="font-size:0.75rem; color:#666; margin-top:5px;">Hardware & Circuit Preview</p>
+                        </div>
+                    </div>
+                `,
+                folderStructure: "📁 air-mouse-project/\n ├── 📄 main.py (Python Script)\n └── 📄 sketch.ino (Arduino Code)",
+                codeElementId: "code-airmouse"
+            },
+            {
+                id: 3,
+                name: "Farjana Akter",
+                role: "6th Semester, CST",
+                type: "skill",
+                title: "Personal Web Developer Portfolio Layout",
+                desc: "মডার্ন রেসপন্সিভ গ্রিড-নেভিগেশন ও পার্সোনাল পোর্টফোলিও ওয়েবসাইট তৈরি করার দক্ষতা।",
+                tags: ["HTML5", "CSS3", "Portfolio"],
+                contact: "Email: sumaiyafarjanaakter86@gmail.com",
+                hasLivePreview: true,
+                hasCode: true,
+                // 👇 ৩. পোর্টফোলিও ছবির নাম এখানে বসাবেন
+                liveDetails: `
+                    <div style="background:#f0fdf4; padding:1rem; border-radius:10px; border:1px solid #bbf7d0;">
+                        <h4 style="color:#15803d; margin-bottom:0.5rem;"><i class="fa-solid fa-user-gear"></i> Portfolio Specs</h4>
+                        <div class="preview-img-container">
+                            <img src="Portfolio.png" alt="Portfolio Preview" onerror="this.src='https://via.placeholder.com/600x300?text=Image+Not+Found'">
+                            <p style="font-size:0.75rem; color:#666; margin-top:5px;">Portfolio Preview</p>
+                        </div>
+                    </div>
+                `,
+                folderStructure: "📁 portfolio-site/\n ├── 📄 index.html\n └── 📄 style.css",
+                codeElementId: "code-portfolio"
+            },
+            {
+                id: 4,
+                name: "Tanvir Hasan",
+                role: "4th Semester, CST",
+                type: "help",
+                title: "Proteus 8.0 সফটওয়্যারে Circuit Simulation ত্রুটি সমস্যা!",
+                desc: "4-bit parallel adder সার্কিট সিমুলেশন করার সময় Proteus সফটওয়্যারে error দেখায়। কেউ একটু সমাধান দেবেন?",
+                tags: ["Proteus", "Digital Electronics", "Help"],
+                contact: "Email: tanvir.cpi@gmail.com",
+                hasLivePreview: false,
+                hasCode: false
+            }
+        ];
+
+        function renderPosts() {
+            const feedGrid = document.getElementById('feedGrid');
+            const searchVal = document.getElementById('searchInput').value.toLowerCase();
+            feedGrid.innerHTML = '';
+
+            const filtered = postsData.filter(post => {
+                const matchesCat = (currentCategory === 'all') || (post.type === currentCategory);
+                const matchesSearch = post.title.toLowerCase().includes(searchVal) || 
+                                      post.desc.toLowerCase().includes(searchVal) ||
+                                      post.tags.some(t => t.toLowerCase().includes(searchVal));
+                return matchesCat && matchesSearch;
+            });
+
+            if (filtered.length === 0) {
+                feedGrid.innerHTML = `<div style="grid-column: 1/-1; text-align: center; color: var(--text-muted); padding: 3rem;">কোনো পোস্ট বা প্রশ্ন পাওয়া যায়নি।</div>`;
+                return;
+            }
+
+            filtered.forEach(post => {
+                const badgeText = post.type === 'skill' ? 'Skill' : (post.type === 'project' ? 'Project' : 'Help Request');
+                const badgeClass = post.type === 'skill' ? 'badge-skill' : (post.type === 'project' ? 'badge-project' : 'badge-help');
+                const initial = post.name.charAt(0);
+
+                let extraActions = '';
+                if(post.hasLivePreview || post.hasCode) {
+                    extraActions = `<div class="action-buttons">`;
+                    if(post.hasLivePreview) {
+                        extraActions += `<button class="btn btn-accent" onclick="openLivePreview(${post.id})"><i class="fa-solid fa-eye"></i> Live Preview</button>`;
+                    }
+                    if(post.hasCode) {
+                        extraActions += `<button class="btn btn-outline" onclick="openCodeModal(${post.id})"><i class="fa-solid fa-code"></i> View Code</button>`;
+                    }
+                    extraActions += `</div>`;
+                }
+
+                const cardHTML = `
+                    <div class="card">
+                        <div>
+                            <div class="card-header">
+                                <div class="user-info">
+                                    <div class="avatar">${initial}</div>
+                                    <div class="user-details">
+                                        <h4>${post.name}</h4>
+                                        <p>${post.role}</p>
+                                    </div>
+                                </div>
+                                <span class="badge ${badgeClass}">${badgeText}</span>
+                            </div>
+                            <div class="card-body">
+                                <h3>${post.title}</h3>
+                                <p>${post.desc}</p>
+                                <div class="tag-list">
+                                    ${post.tags.map(t => `<span class="tag">#${t.trim()}</span>`).join('')}
+                                </div>
+                                ${extraActions}
+                            </div>
+                        </div>
+                        <div class="card-footer">
+                            <span class="time">Active</span>
+                            <button class="btn btn-primary" onclick="openContactModal('${post.name}', '${post.role}', '${post.contact}')">
+                                <i class="fa-regular fa-paper-plane"></i> Connect
+                            </button>
+                        </div>
+                    </div>
+                `;
+                feedGrid.innerHTML += cardHTML;
+            });
+        }
+
+        let currentCategory = 'all';
+
+        function setCategory(cat, el) {
+            currentCategory = cat;
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            el.classList.add('active');
+            renderPosts();
+        }
+
+        function filterPosts() { renderPosts(); }
+
+        function openLivePreview(id) {
+            const post = postsData.find(p => p.id === id);
+            if(post && post.liveDetails) {
+                document.getElementById('previewTitle').innerText = post.title + " (Preview & Screenshots)";
+                document.getElementById('previewBody').innerHTML = post.liveDetails;
+                document.getElementById('previewModal').classList.add('active');
+            }
+        }
+        function closePreviewModal() { document.getElementById('previewModal').classList.remove('active'); }
+
+        function openCodeModal(id) {
+            const post = postsData.find(p => p.id === id);
+            if(post && post.codeElementId) {
+                const codeText = document.getElementById(post.codeElementId).innerHTML.trim();
+                document.getElementById('codeTitle').innerText = post.title + " - Source Code & Files";
+                document.getElementById('codeBody').innerHTML = `
+                    <div style="font-size: 0.85rem; font-weight: 600; margin-bottom: 0.4rem;">Folder Structure:</div>
+                    <pre class="file-tree">${post.folderStructure}</pre>
+                    <div style="font-size: 0.85rem; font-weight: 600; margin-bottom: 0.4rem;">Source Code:</div>
+                    <textarea class="code-box" readonly>${codeText}</textarea>
+                `;
+                document.getElementById('codeModal').classList.add('active');
+            }
+        }
+        function closeCodeModal() { document.getElementById('codeModal').classList.remove('active'); }
+
+        function openContactModal(name, role, contact) {
+            document.getElementById('contactPersonName').innerText = name;
+            document.getElementById('contactPersonRole').innerText = role;
+            document.getElementById('contactDetails').innerText = contact;
+            document.getElementById('contactModal').classList.add('active');
+        }
+        function closeContactModal() { document.getElementById('contactModal').classList.remove('active'); }
+
+        function openCreatePostModal() { document.getElementById('createPostModal').classList.add('active'); }
+        function closeCreatePostModal() { document.getElementById('createPostModal').classList.remove('active'); }
+
+        function handleNewPost(e) {
+            e.preventDefault();
+            const newPost = {
+                id: Date.now(),
+                name: document.getElementById('postName').value,
+                role: document.getElementById('postRole').value,
+                type: document.getElementById('postType').value,
+                title: document.getElementById('postTitle').value,
+                desc: document.getElementById('postDesc').value,
+                tags: document.getElementById('postTags').value.split(',').map(t => t.trim()),
+                contact: document.getElementById('postContact').value,
+                hasLivePreview: false,
+                hasCode: false
+            };
+            postsData.unshift(newPost);
+            closeCreatePostModal();
+            renderPosts();
+            e.target.reset();
+        }
+
+        renderPosts();
+    </script>
+</body>
+</html>
